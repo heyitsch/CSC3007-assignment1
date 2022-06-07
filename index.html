@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 1</title>
+    <style>
+        h2 {
+            display: block;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align:center;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        table {
+            width: 80%;
+            margin: 10px auto;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        td,th {
+            border: 1px solid black;
+            padding: 3px;
+            text-align: center;
+        }
+        tr:nth-child(even) {
+            background-color: lightgray;
+        }
+        #tableStyle {
+            background-color: grey;
+            color: white;
+            font-family: Arial;
+        }
+        #psiInfo {
+            font-family: Arial;
+        }
+    </style>
+  </head>
+  <body>
+    <h2 id="formatTimestamp"></h2>
+    <table id="psiTable">
+      <tr id="tableStyle">
+        <th>Metric</th>
+        <th>National</th>
+        <th>Central</th>
+        <th>West</th>
+        <th>East</th>
+        <th>North</th>
+        <th>South</th>
+      </tr>
+      <tbody id="psiInfo">
+
+      </tbody>
+    </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+
+    <script>
+      const api_call = 'https://api.data.gov.sg/v1/environment/psi'
+      async function getData(api_call) {
+      const response = await fetch(api_call);
+      var data = await response.json();
+      
+      let psiReadings = data.items[0].readings;
+      let timestamp = data.items[0].timestamp;
+      // console.log(psiReadings);
+      // console.log(timestamp);
+
+      var formatTimestamp =  new Date(timestamp);
+      formatTimestamp = moment(formatTimestamp).format('MMMM Do YYYY, h:mm:ss a');
+      console.log(formatTimestamp);
+      $('#formatTimestamp').append("Last updated: " + formatTimestamp);
+
+      for (let i in psiReadings) {
+        appendtext  = "<tr> <td>" + JSON.stringify(i).replaceAll('"', "") + "</td> <td>" + psiReadings[i].national + "</td> <td>" + psiReadings[i].central + "</td> <td>" + psiReadings[i].west + "</td> <td>" + psiReadings[i].east + "</td> <td>" + psiReadings[i].north + "</td> <td>" + psiReadings[i].south + "</td> </tr>";
+
+        $('#psiInfo').append(appendtext);
+      }
+
+      }
+      getData(api_call);
+    </script>
+  </body>
+</html>
